@@ -61,7 +61,7 @@ class RateFluctuation {
 const rateFluctuationService = new RateFluctuationService();
 
 function simulateRateFluctuations(rate) {
-    let rateFluctuationList = rateFluctuationService.calcurateHigherRateFluctuations(rate, 5);
+    let rateFluctuationList = rateFluctuationService.calcurateHigherRateFluctuations(rate, 20);
     console.log(rateFluctuationList);
     return rateFluctuationList;
 }

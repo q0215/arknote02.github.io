@@ -1,37 +1,55 @@
-<html>
+<!doctype html>
+<html lang="ja">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous" />
+</head>
 <body>
-    <div>
-        <form name="test">
-            <select id="type">
-                <option value="1" selected>ボーダーチェック</option>
-                <option value="2">10回連続（天井未対応）</option>
-            </select>
-            <input type="number" id="rate" />
-        </form>
-        <input type="button" value="calc" onclick="clickEvent()" />
-    </div>
-    <table id="result">kekka</table>>
-    <div id="hoge"></div>
+    <form class="pure-form pure-form-aligned">
+        <fieldset>
+            <div class="pure-control-group">
+                <label for="simurate-type">シュミレーション</label>
+                <select id="simurate-type">
+                    <option value="1">変動値確認</option>
+                    <option value="2">10回変動値確認（天井未対応）</option>
+                </select>
+            </div>
+            <div class="pure-control-group">
+                <label for="current-rate">現在のレート</label>
+                <input type="number" id="current-rate" value="0" />
+            </div>
+            <div class="pure-controls">
+                <button type="button" class="pure-button pure-button-primary" onclick="clickEvent()">シュミレートする</button>
+            </div>
+        </fieldset>
+    </form>
+    <table class="pure-table pure-table-horizontal" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>対戦相手レート（下限）</th>
+                <th>勝利後レート</th>
+            </tr>
+        </thead>
+        <tbody id="result"></tbody>
+    </table>
     <script src="./rate-fluctions.js" type="text/javascript" charset="utf-8"></script>
     <script>
+        const simurateTypeDom = document.getElementById("simurate-type");
+        const currentRateDom = document.getElementById("current-rate");
+
         function clickEvent() {
-            const inputType = document.test.type;
-            const inputRate = document.test.rate;
-            const type = inputType.options[inputType.selectedIndex].value;
-            const rate = inputRate.value;
-            console.log(type + " " + rate);
-            let simulatedRateFluctuationList
-            if (type == 1) {
-                simulatedRateFluctuationList = simulateRateFluctuations(parseInt(rate));
+            let simurateType = simurateTypeDom.options[simurateTypeDom.selectedIndex].value;
+            let currentRate = parseInt(currentRateDom.value);
+            let rateFluctuationList
+            if (simurateType == 1) {
+                rateFluctuationList = simulateRateFluctuations(currentRate);
             } else {
-                simulatedRateFluctuationList = simulateIdealRateFluctuations(parseInt(rate));
+                rateFluctuationList = simulateIdealRateFluctuations(currentRate);
             }
-            let inner = "<table>";
-            for (let rateFulction in simulatedRateFluctuationList) {
-                inner += "<tr><td>" + simulatedRateFluctuationList[rateFulction].borderRate + "</td><td>" + simulatedRateFluctuationList[rateFulction].expectedRate + "</td></tr>";
+            let inner = "";
+            for (let index in rateFluctuationList) {
+                inner += "<tr><td>" + rateFluctuationList[index].borderRate + "</td><td>" + rateFluctuationList[index].expectedRate + "</td></tr>";
             }
-            inner += "</table>"
-            document.getElementById('hoge').innerHTML = inner;
+            document.getElementById("result").innerHTML = inner;
         }
     </script>
 </body>
