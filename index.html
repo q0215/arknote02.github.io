@@ -9,8 +9,8 @@
         <fieldset>
             <input type="text" name="dummy" style="display:none;">
             <div class="pure-control-group">
-                <label for="simurate-type">シュミレーション</label>
-                <select id="simurate-type" style="width: 100%;">
+                <label for="simulate-type">シュミレーション</label>
+                <select id="simulate-type" style="width: 100%;">
                     <option value="1">変動値確認</option>
                     <option value="2">10回変動値確認（天井未対応）</option>
                 </select>
@@ -35,13 +35,13 @@
     </table>
     <script src="./rate-fluctions.js" type="text/javascript" charset="utf-8"></script>
     <script>
-        const simurateTypeDom = document.getElementById("simurate-type");
+        const simulateTypeDom = document.getElementById("simulate-type");
         const currentRateDom = document.getElementById("current-rate");
         function clickEvent() {
-            let simurateType = simurateTypeDom.options[simurateTypeDom.selectedIndex].value;
+            let simulateType = simulateTypeDom.options[simulateTypeDom.selectedIndex].value;
             let currentRate = parseInt(currentRateDom.value);
             let rateFluctuationList
-            if (simurateType == 1) {
+            if (simulateType == 1) {
                 rateFluctuationList = simulateRateFluctuations(currentRate);
             } else {
                 rateFluctuationList = simulateIdealRateFluctuations(currentRate);
