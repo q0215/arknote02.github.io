@@ -1,0 +1,38 @@
+<html>
+<body>
+    <div>
+        <form name="test">
+            <select id="type">
+                <option value="1" selected>ボーダーチェック</option>
+                <option value="2">10回連続（天井未対応）</option>
+            </select>
+            <input type="number" id="rate" />
+        </form>
+        <input type="button" value="calc" onclick="clickEvent()" />
+    </div>
+    <table id="result">kekka</table>>
+    <div id="hoge"></div>
+    <script src="./rate-fluctions.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        function clickEvent() {
+            const inputType = document.test.type;
+            const inputRate = document.test.rate;
+            const type = inputType.options[inputType.selectedIndex].value;
+            const rate = inputRate.value;
+            console.log(type + " " + rate);
+            let simulatedRateFluctuationList
+            if (type == 1) {
+                simulatedRateFluctuationList = simulateRateFluctuations(parseInt(rate));
+            } else {
+                simulatedRateFluctuationList = simulateIdealRateFluctuations(parseInt(rate));
+            }
+            let inner = "<table>";
+            for (let rateFulction in simulatedRateFluctuationList) {
+                inner += "<tr><td>" + simulatedRateFluctuationList[rateFulction].borderRate + "</td><td>" + simulatedRateFluctuationList[rateFulction].expectedRate + "</td></tr>";
+            }
+            inner += "</table>"
+            document.getElementById('hoge').innerHTML = inner;
+        }
+    </script>
+</body>
+</html>
