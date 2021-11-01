@@ -7,12 +7,13 @@
 <body style="margin: 10px;">
     <form class="pure-form pure-form-aligned">
         <fieldset>
+            <!-- enterによるsubmit回避 -->
             <input type="text" name="dummy" style="display:none;">
             <div class="pure-control-group">
                 <label for="simulate-type">シュミレーション</label>
                 <select id="simulate-type" style="width: 100%;">
-                    <option value="1">変動値確認</option>
-                    <option value="2">10回変動値確認（天井未対応）</option>
+                    <option value="1">勝利後のレートを確認する</option>
+                    <option value="2">10回対戦でのレート推移を確認する</option>
                 </select>
             </div>
             <div class="pure-control-group">
@@ -27,7 +28,7 @@
     <table class="pure-table pure-table-horizontal" style="width: 100%;">
         <thead>
             <tr>
-                <th>対戦相手レート（下限）</th>
+                <th>相手レート（下限）</th>
                 <th>勝利後レート</th>
             </tr>
         </thead>
@@ -38,19 +39,24 @@
         const simulateTypeDom = document.getElementById("simulate-type");
         const currentRateDom = document.getElementById("current-rate");
         function clickEvent() {
-            let simulateType = simulateTypeDom.options[simulateTypeDom.selectedIndex].value;
+            let simulateType = parseInt(simulateTypeDom.options[simulateTypeDom.selectedIndex].value);
             let currentRate = parseInt(currentRateDom.value);
-            let rateFluctuationList
-            if (simulateType == 1) {
-                rateFluctuationList = simulateRateFluctuations(currentRate);
-            } else {
-                rateFluctuationList = simulateIdealRateFluctuations(currentRate);
+            let tbodyInnerHtml = "";
+            try {
+                let rateFluctuationList
+                if (simulateType == 1) {
+                    rateFluctuationList = simulateRateFluctuations(currentRate);
+                } else {
+                    rateFluctuationList = simulateIdealRateFluctuations(currentRate);
+                }
+                for (let i in rateFluctuationList) {
+                    let rateFluctuation = rateFluctuationList[i];
+                    tbodyInnerHtml += "<tr><td>" + rateFluctuation.borderRate + "</td><td>" + rateFluctuation.expectedRate + "</td></tr>";
+                }
+            } catch(e) {
+                tbodyInnerHtml += "<tr><td colspan=\"2\">" + e + "</td></tr>";
             }
-            let inner = "";
-            for (let index in rateFluctuationList) {
-                inner += "<tr><td>" + rateFluctuationList[index].borderRate + "</td><td>" + rateFluctuationList[index].expectedRate + "</td></tr>";
-            }
-            document.getElementById("result").innerHTML = inner;
+            document.getElementById("result").innerHTML = tbodyInnerHtml;
         }
     </script>
 </body>

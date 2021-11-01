@@ -32,7 +32,7 @@ class RateFluctuationService {
             rateFluctuationList.unshift(new RateFluctuation(0, 162));
             return rateFluctuationList;
         } else if (rate < 162) {
-            throw "Input value \"" + rate + "\" is invalid.";
+            throw "現在のレートを正しく入力してください。";
         }
         let correctValue = this.correctValueService.getCorrectValue(rate);
         let currentExpectedRate = 0;
@@ -61,7 +61,7 @@ class RateFluctuation {
 const rateFluctuationService = new RateFluctuationService();
 
 function simulateRateFluctuations(rate) {
-    let rateFluctuationList = rateFluctuationService.calcurateHigherRateFluctuations(rate, 20);
+    let rateFluctuationList = rateFluctuationService.calcurateHigherRateFluctuations(rate, 10);
     console.log(rateFluctuationList);
     return rateFluctuationList;
 }
