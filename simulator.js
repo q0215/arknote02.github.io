@@ -20,13 +20,13 @@ class CorrectValueService {
     }
 }
 
-// レート変動
-class RateFluctuationService {
+// レート変動シュミレーション
+class SimulateRateFluctuationService {
 
     correctValueService = new CorrectValueService();
 
-    // 対戦相手のレート下限と対戦後の自レートを計算する
-    calcurateHigherRateFluctuations(rate, count) {
+    // 相手レートの下限と自レートの変動を計算する
+    simulateRateFluctuationList(rate) {
         let rateFluctuationList = new Array();
         if (rate == 0) {
             rateFluctuationList.unshift(new RateFluctuation(0, 162));
@@ -36,17 +36,33 @@ class RateFluctuationService {
         }
         let correctValue = this.correctValueService.getCorrectValue(rate);
         let currentExpectedRate = 0;
-        for (let i = rate; i <= rate + 200; i++) {
+        for (let i = rate - 200; i <= rate + 200; i++) {
+            if (i < 0) {
+                continue;
+            }
             let expectedRate = Math.floor(rate + 50 + correctValue * i / rate);
             if (expectedRate > currentExpectedRate) {
                 rateFluctuationList.unshift(new RateFluctuation(i, expectedRate));
                 currentExpectedRate = expectedRate;
             }
         }
-        return rateFluctuationList.slice(0, count);
+        return rateFluctuationList;
+    }
+
+    // 10回連続で相手レートの下限と自レートの変動を計算する
+    simulateContinuousHighestRateFluctuationList(rate) {
+        let continuousHighestRateFluctuationList = new Array();
+        let currentExpectedRate = rate;
+        for (let i = 0; i < 10; i ++) {
+            let rateFluctuation = this.simulateRateFluctuationList(currentExpectedRate).shift();
+            continuousHighestRateFluctuationList.push(rateFluctuation);
+            currentExpectedRate = rateFluctuation.expectedRate;
+        }
+        return continuousHighestRateFluctuationList;
     }
 }
 
+// レート変動
 class RateFluctuation {
 
     borderRate = 0;
@@ -56,24 +72,4 @@ class RateFluctuation {
         this.borderRate = borderRate;
         this.expectedRate = expectedRate;
     }
-}
-
-const rateFluctuationService = new RateFluctuationService();
-
-function simulateRateFluctuations(rate) {
-    let rateFluctuationList = rateFluctuationService.calcurateHigherRateFluctuations(rate, 10);
-    console.log(rateFluctuationList);
-    return rateFluctuationList;
-}
-
-function simulateIdealRateFluctuations(rate) {
-    let currentExpectedRate = rate;
-    const expectedRateFluctuationList = new Array();
-    for (let i = 0; i < 10; i ++) {
-        let rateFluctuation = rateFluctuationService.calcurateHigherRateFluctuations(currentExpectedRate, 1).shift();
-        expectedRateFluctuationList.push(rateFluctuation);
-        currentExpectedRate = rateFluctuation.expectedRate;
-    }
-    console.log(expectedRateFluctuationList);
-    return expectedRateFluctuationList;
 }

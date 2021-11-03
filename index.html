@@ -5,59 +5,43 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous" />
 </head>
 <body style="margin: 10px;">
-    <form class="pure-form pure-form-aligned">
+    <form action="./index.html" class="pure-form pure-form-aligned">
         <fieldset>
-            <!-- enterによるsubmit回避 -->
-            <input type="text" name="dummy" style="display:none;">
             <div class="pure-control-group">
                 <label for="simulate-type">シュミレーション</label>
-                <select id="simulate-type" style="width: 100%;">
-                    <option value="1">勝利後のレートを確認する</option>
-                    <option value="2">10回対戦でのレート推移を確認する</option>
+                <select id="simulate-type" name="t" style="width: 100%;">
+                    <option value="0">勝利後のレートを確認する</option>
+                    <option value="1">10回対戦でのレート推移を確認する</option>
                 </select>
             </div>
             <div class="pure-control-group">
                 <label for="current-rate">現在のレート</label>
-                <input type="number" id="current-rate" value="0" style="width: 100%;" />
+                <input id="current-rate" name="r" type="number" value="0" style="width: 100%;" />
             </div>
             <div class="pure-controls">
-                <button type="button" class="pure-button pure-button-primary" onclick="clickEvent();">シュミレートする</button>
+                <input type="submit" class="pure-button pure-button-primary" value="シュミレートする" />
             </div>
         </fieldset>
     </form>
-    <table class="pure-table pure-table-horizontal" style="width: 100%;">
-        <thead>
-            <tr>
-                <th>相手レート（下限）</th>
-                <th>勝利後レート</th>
-            </tr>
-        </thead>
-        <tbody id="result"></tbody>
-    </table>
-    <script src="./rate-fluctions.js" type="text/javascript" charset="utf-8"></script>
+    <table id="result" class="pure-table pure-table-horizontal" style="width: 100%;"></table>
+    <script src="./simulator.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./updater.js" type="text/javascript" charset="utf-8"></script>
     <script>
-        const simulateTypeDom = document.getElementById("simulate-type");
-        const currentRateDom = document.getElementById("current-rate");
-        function clickEvent() {
-            let simulateType = parseInt(simulateTypeDom.options[simulateTypeDom.selectedIndex].value);
-            let currentRate = parseInt(currentRateDom.value);
-            let tbodyInnerHtml = "";
-            try {
-                let rateFluctuationList
-                if (simulateType == 1) {
-                    rateFluctuationList = simulateRateFluctuations(currentRate);
-                } else {
-                    rateFluctuationList = simulateIdealRateFluctuations(currentRate);
-                }
-                for (let i in rateFluctuationList) {
-                    let rateFluctuation = rateFluctuationList[i];
-                    tbodyInnerHtml += "<tr><td>" + rateFluctuation.borderRate + "</td><td>" + rateFluctuation.expectedRate + "</td></tr>";
-                }
-            } catch(e) {
-                tbodyInnerHtml += "<tr><td colspan=\"2\">" + e + "</td></tr>";
-            }
-            document.getElementById("result").innerHTML = tbodyInnerHtml;
-        }
+        // GETパラメータを取得する
+        const params = (new URL(document.location)).searchParams;
+        const simulateType = params.has("t") ? parseInt(params.get("t")) : 0;
+        const currentRate = params.has("r") ? parseInt(params.get("r")) : 0;
+        // フォームを初期化する
+        const simulateTypeFormService = new SimulateTypeFormService(document.getElementById("simulate-type"));
+        const currentRateFormService = new CurrentRateFormService(document.getElementById("current-rate"));
+        simulateTypeFormService.setValue(simulateType);
+        currentRateFormService.setValue(currentRate);
+        // シュミレーションする
+        const tableInnerHtmlService = new TableInnerHtmlService();
+        let innerHtml = tableInnerHtmlService.create(simulateType, currentRate);
+        // テーブルを更新する
+        const tableService = new TableService(document.getElementById("result"));
+        tableService.update(innerHtml);
     </script>
 </body>
 </html>
