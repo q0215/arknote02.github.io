@@ -53,12 +53,29 @@ class SimulateRateFluctuationService {
     simulateContinuousHighestRateFluctuationList(rate) {
         let continuousHighestRateFluctuationList = new Array();
         let currentExpectedRate = rate;
-        for (let i = 0; i < 10; i ++) {
+        for (let i = 0; i < 10; i++) {
             let rateFluctuation = this.simulateRateFluctuationList(currentExpectedRate).shift();
             continuousHighestRateFluctuationList.push(rateFluctuation);
             currentExpectedRate = rateFluctuation.expectedRate;
         }
         return continuousHighestRateFluctuationList;
+    }
+
+    // 日付天井を計算する
+    getDailyHighestRateList() {
+        let dailyHighestRateList = new Array(
+            new RateFluctuation(1166, 1177),
+            new RateFluctuation(2087, 2115),
+            new RateFluctuation(2984, 2987),
+            new RateFluctuation(3679, 3754),
+            new RateFluctuation(4408, 4478),
+            new RateFluctuation(5103, 5168),
+            new RateFluctuation(5753, 5818),
+            new RateFluctuation(6125, 6377),
+            new RateFluctuation(6645, 6897),
+            new RateFluctuation(7165, 7417)
+        );
+        return dailyHighestRateList;
     }
 }
 

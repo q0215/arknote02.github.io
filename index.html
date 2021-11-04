@@ -5,13 +5,14 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous" />
 </head>
 <body style="margin: 10px;">
-    <form action="/" class="pure-form pure-form-aligned">
+    <form action="./index.html" class="pure-form pure-form-aligned">
         <fieldset>
             <div class="pure-control-group">
                 <label for="simulate-type">シュミレーション</label>
                 <select id="simulate-type" name="t" style="width: 100%;">
                     <option value="0">勝利後のレートを確認する</option>
                     <option value="1">10回対戦でのレート推移を確認する</option>
+                    <option value="2">経過日の天井レートを確認する</option>
                 </select>
             </div>
             <div class="pure-control-group">
@@ -34,6 +35,20 @@
         // フォームを初期化する
         const simulateTypeFormService = new SimulateTypeFormService(document.getElementById("simulate-type"));
         const currentRateFormService = new CurrentRateFormService(document.getElementById("current-rate"));
+        simulateTypeFormService.addEventListener('change', function() {
+            const simulateType = simulateTypeFormService.getValue();
+            if (simulateType == 2) {
+                currentRateFormService.disable();
+            } else {
+                currentRateFormService.enable();
+            }
+            tableService.clear();
+        });
+        if (simulateType == 2) {
+            currentRateFormService.disable();
+        } else {
+            currentRateFormService.enable();
+        }
         simulateTypeFormService.setValue(simulateType);
         currentRateFormService.setValue(currentRate);
         // シュミレーションする
