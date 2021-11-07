@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous" />
 </head>
 <body style="margin: 10px;">
-    <form action="./index.html" class="pure-form pure-form-aligned">
+    <form action="/" class="pure-form pure-form-aligned">
         <fieldset>
             <div class="pure-control-group">
                 <label for="simulate-type">シュミレーション</label>
@@ -27,36 +27,15 @@
     <table id="result" class="pure-table pure-table-horizontal" style="width: 100%;"></table>
     <script src="./simulator.js" type="text/javascript" charset="utf-8"></script>
     <script src="./updater.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./view.js" type="text/javascript" charset="utf-8"></script>
     <script>
         // GETパラメータを取得する
         const params = (new URL(document.location)).searchParams;
         const simulateType = params.has("t") ? parseInt(params.get("t")) : 0;
         const currentRate = params.has("r") ? parseInt(params.get("r")) : 0;
-        // フォームを初期化する
-        const simulateTypeFormService = new SimulateTypeFormService(document.getElementById("simulate-type"));
-        const currentRateFormService = new CurrentRateFormService(document.getElementById("current-rate"));
-        simulateTypeFormService.addEventListener('change', function() {
-            const simulateType = simulateTypeFormService.getValue();
-            if (simulateType == 2) {
-                currentRateFormService.disable();
-            } else {
-                currentRateFormService.enable();
-            }
-            tableService.clear();
-        });
-        if (simulateType == 2) {
-            currentRateFormService.disable();
-        } else {
-            currentRateFormService.enable();
-        }
-        simulateTypeFormService.setValue(simulateType);
-        currentRateFormService.setValue(currentRate);
-        // シュミレーションする
-        const tableInnerHtmlService = new TableInnerHtmlService();
-        let innerHtml = tableInnerHtmlService.create(simulateType, currentRate);
-        // テーブルを更新する
-        const tableService = new TableService(document.getElementById("result"));
-        tableService.update(innerHtml);
+        // ビューを更新する
+        const viewService = new ViewService(simulateType, currentRate);
+        viewService.update();
     </script>
 </body>
 </html>
