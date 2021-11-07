@@ -10,7 +10,7 @@ class ViewService {
     constructor(simulateType, currentRate) {
         this.simulateTypeFormService.setValue(simulateType);
         this.currentRateFormService.setValue(currentRate);
-        this.simulateTypeFormService.addEventListener("change", (e) => { this.update(); });
+        this.simulateTypeFormService.addEventListener("change", (e) => { this.handleEvent(); });
     }
 
     update() {
@@ -24,5 +24,11 @@ class ViewService {
         const theadHtml = this.theadHtmlService.create(simulateType);
         const tbodyHtml = this.tbodyHtmlService.create(simulateType, currentRate);
         this.tableService.update(theadHtml + tbodyHtml);
+    }
+
+    handleEvent() {
+        const simulateType = this.simulateTypeFormService.getValue();
+        const currentRate = this.currentRateFormService.getValue();
+        window.location.href = "/?t=" + simulateType + "&r=" + currentRate;
     }
 }
